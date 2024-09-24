@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Scale up hit targets on high resolution mobile devices. */
+@media (min-resolution: 200dpi) {
+  html {
+    font-size: 18px;
+  }
+
+  .text-sm {
+    /* ensure minimum font size of 16px */
+    font-size: 0.9rem;
+  }
+}
+
+body {
+  @apply bg-white dark:bg-zinc-900;
+  color-scheme: dark light;
+}
+
+
+/* Responsive Design Settings */
+@media (max-width: 640px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .text-lg {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .container {
+    padding: 2rem;
+  }
+
+  .text-lg {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .container {
+    padding: 3rem;
+  }
+
+  .text-lg {
+    font-size: 1.5rem;
+  }
+}
