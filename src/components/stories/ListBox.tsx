@@ -72,7 +72,9 @@ export const dropdownItemStyles = tv({
       true: "text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]",
     },
     isFocused: {
-      true: "bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]",
+      // true: "bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]",
+      // blueではなくgrayに変更
+      true: "bg-gray-100 dark:bg-zinc-700/60 text-gray-900 dark:text-zinc-100 forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]",
     },
   },
   compoundVariants: [

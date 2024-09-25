@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api"
-import { differenceInMilliseconds, parse } from "date-fns"
+import { differenceInSeconds, parse } from "date-fns"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 // Custom hook for updating time
@@ -21,9 +21,12 @@ function useCurrentTime() {
   return currentTime
 }
 
-export function TimerComponent({ start_time }: { start_time: string }) {
+export function TimerComponent({
+  start_time,
+  className,
+}: { start_time: string; className: string }) {
   if (start_time === "") {
-    return <div>00:00:00</div>
+    return <div className={className}>00:00:00</div>
   }
 
   const currentTime = useCurrentTime()
@@ -35,10 +38,10 @@ export function TimerComponent({ start_time }: { start_time: string }) {
 
   const diff = useMemo(() => {
     const parsedTime = parse(currentTime, "yyyy-MM-dd HH:mm:ss", new Date())
-    return differenceInMilliseconds(parsedTime, startTime) || 0
+    return differenceInSeconds(parsedTime, startTime) || 0
   }, [currentTime, startTime])
 
-  return <div>{millisecondsToTime(diff)}</div>
+  return <div className={className}>{millisecondsToTime(diff)}</div>
 }
 
 export function millisecondsToTime(milliseconds: number) {
@@ -58,12 +61,12 @@ export function millisecondsToTime(milliseconds: number) {
   return `${hours}:${minutes}:${seconds}`
 }
 
-export function calculateTimeDifferenceInMilliseconds(
+export function calculateTimeDifferenceInSeconds(
   startTime: string,
   endTime: string,
   dateFormat: string,
 ) {
   const parsedStartTime = parse(startTime, dateFormat, new Date())
   const parsedEndTime = parse(endTime, dateFormat, new Date())
-  return differenceInMilliseconds(parsedEndTime, parsedStartTime)
+  return differenceInSeconds(parsedEndTime, parsedStartTime)
 }

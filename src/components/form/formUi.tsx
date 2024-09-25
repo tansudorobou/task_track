@@ -1,13 +1,14 @@
 import { ChevronRightCircle, StopCircle, Tags } from "lucide-react"
 import type React from "react"
+import { useTransition } from "react"
 import { DialogTrigger, type Selection } from "react-aria-components"
 import { TimerComponent } from "../Timer"
 import { Button } from "../stories/Button"
 import { ComboBox, ComboBoxItem } from "../stories/ComboBox"
 import { Form } from "../stories/Form"
-import { ListBox, ListBoxItem } from "../stories/ListBox"
+import { DropdownItem, ListBox } from "../stories/ListBox"
 import { Popover } from "../stories/Popover"
-import { Tag as RTag, TagGroup } from "../stories/TagGroup"
+import { Tag as RTag, TagGroup, tagStyle } from "../stories/TagGroup"
 import type { ComboxItem } from "../types"
 
 export type Item = {
@@ -50,10 +51,18 @@ export function FormUi({
   handleSubmit,
 }: FormUiProps) {
   const hasSelectedTags = selectedTags instanceof Set && selectedTags.size > 0
+  const [isPending, startTransition] = useTransition()
+
+  const onSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
+    startTransition(() => {
+      handleSubmit(event)
+    })
+  }
 
   return (
     <div className="w-full pt-1">
-      <Form onSubmit={handleSubmit} className="gap-4">
+      <Form onSubmit={onSubmit} className="gap-4">
         <ComboBox
           items={items}
           name="title"
@@ -69,7 +78,7 @@ export function FormUi({
         </ComboBox>
         <div className="flex ml-auto gap-2 items-center">
           <TagGroup
-            className="items-center gap-2 pb-2 w-0 overflow-hidden sm:w-fit sm:max-w-xs md:w-fit md:max-w-sm lg:w-fit lg:max-w-md xl:w-fit xl:max-w-lg 2xl:w-fit 2xl:max-w-xl"
+            className="items-center gap-2 pb-2 w-0 overflow-hidden sm:w-fit sm:max-w-xs md:w-fit md:max-w-sm lg:w-fit lg:max-w-md xl:w-fit xl:max-w-lg 2xl:w-fit 2xl:max-w-xl hidden xs:block"
             items={Array.from(selectedTags).map(
               (tagId) => tags.find((tag) => tag.id === tagId) as Tag,
             )}
@@ -91,7 +100,7 @@ export function FormUi({
             )}
           </TagGroup>
           <DialogTrigger>
-            <Button type="button" variant="icon">
+            <Button type="button" variant="icon" className="hidden xs:block">
               <Tags
                 size={30}
                 className={
@@ -99,31 +108,40 @@ export function FormUi({
                 }
               />
             </Button>
-            <Popover showArrow>
+            <Popover>
               <ListBox
                 selectionMode="multiple"
                 selectedKeys={selectedTags}
                 onSelectionChange={(keys) => setSelectedTags(keys)}
+                className="h-60 overflow-y-auto"
               >
                 {tags?.map((tag) => (
-                  <ListBoxItem id={tag.id} key={tag.id}>
-                    {tag.name}
-                  </ListBoxItem>
+                  <DropdownItem id={tag.id} key={tag.id}>
+                    <span className={tagStyle(tag.color || "gray")}>
+                      {tag.name}
+                    </span>
+                  </DropdownItem>
                 ))}
               </ListBox>
             </Popover>
           </DialogTrigger>
-          <RecordButton isStarted={isStarted} />
-          <TimerComponent start_time={data?.start_time} />
+          <RecordButton isStarted={isStarted} isPending={isPending} />
+          <TimerComponent
+            start_time={data?.start_time}
+            className="hidden xs:block"
+          />
         </div>
       </Form>
     </div>
   )
 }
 
-export const RecordButton = ({ isStarted }: { isStarted: boolean }) => {
+export const RecordButton = ({
+  isStarted,
+  isPending,
+}: { isStarted: boolean; isPending: boolean }) => {
   return (
-    <Button type="submit" variant="icon">
+    <Button type="submit" variant="icon" isDisabled={isPending}>
       {isStarted ? (
         <StopCircle size={40} className="text-red-400" />
       ) : (

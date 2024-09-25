@@ -28,7 +28,7 @@ export default function TaskList({
   const deleteTaskMutation = useDeleteTask()
 
   const millisecondsToMinutes = (milliseconds: number) => {
-    return Math.floor(milliseconds / 1000 / 60)
+    return Math.floor(milliseconds / 60)
   }
 
   return (
@@ -43,7 +43,7 @@ export default function TaskList({
               {item.title}
             </div>
             <div className="flex ml-auto gap-2 items-center">
-              <TagGroup className="my-1 overflow-hidden">
+              <TagGroup className="my-1 overflow-hidden hidden xs:block">
                 {item.tags.map((tag) => (
                   <Tag
                     key={tag}

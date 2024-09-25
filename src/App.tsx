@@ -13,6 +13,7 @@ import { message } from "@tauri-apps/api/dialog"
 import { listen } from "@tauri-apps/api/event"
 import { Suspense, useState } from "react"
 import TaskForm from "./components/form/form"
+import NewTaskForm from "./components/form/new"
 import { getTags, getTasksByDay, getTop50Items } from "./components/invokes"
 import TaskList from "./components/list/list"
 import { DatePicker } from "./components/stories/DatePicker"
@@ -36,15 +37,10 @@ function App() {
         <div className="max-w-full max-h-full">
           <div className="fixed z-40 w-full bg-gray-50 pb-2">
             <Suspense fallback={<div>Loading...</div>} key={"form"}>
-              <div className="mx-5">
-                <TaskFormLoader date={date} />
-              </div>
+              <TaskFormLoader date={date} setDate={setDate} />
             </Suspense>
-            <div className="w-12 mx-5">
-              <DatePicker defaultValue={date} onChange={setDate} key={"list"} />
-            </div>
           </div>
-          <div className="pt-[88px]">
+          <div className="pt-[92px] h-screen">
             <Suspense fallback={<div>Loading...</div>}>
               <TaskListLoader date={date} />
             </Suspense>
@@ -59,7 +55,10 @@ function App() {
 
 export default App
 
-function TaskFormLoader({ date }: { date: CalendarDate }) {
+function TaskFormLoader({
+  date,
+  setDate,
+}: { date: CalendarDate; setDate: (date: CalendarDate) => void }) {
   const { data: tags } = useSuspenseQuery({
     queryKey: ["tags"],
     queryFn: getTags,
@@ -69,7 +68,17 @@ function TaskFormLoader({ date }: { date: CalendarDate }) {
     queryFn: getTop50Items,
   })
 
-  return <TaskForm tags={tags} items={items} date={date} />
+  return (
+    <>
+      <div className="mx-5">
+        <TaskForm tags={tags} items={items} date={date} />
+      </div>
+      <div className="flex mx-5 w-12">
+        <DatePicker defaultValue={date} onChange={setDate} key={"list"} />
+        <NewTaskForm tags={tags} date={date} className="ml-5 hidden xs:block" />
+      </div>
+    </>
+  )
 }
 
 function TaskListLoader({ date }: { date: CalendarDate }) {

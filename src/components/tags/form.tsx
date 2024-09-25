@@ -5,7 +5,7 @@ import { v4 } from "uuid"
 import { Button } from "../stories/Button"
 import { Dialog } from "../stories/Dialog"
 import { Select, SelectItem } from "../stories/Select"
-import { colors } from "../stories/TagGroup"
+import { colors, tagStyle } from "../stories/TagGroup"
 import { TextField } from "../stories/TextField"
 import type { Tag } from "../types"
 
@@ -45,7 +45,7 @@ export default function TagsForm({
             <Select label="カラー" name="color">
               {Object.keys(colors).map((color) => (
                 <SelectItem key={color} id={color}>
-                  {color}
+                  <span className={tagStyle(color || "gray")}>{color}</span>
                 </SelectItem>
               ))}
             </Select>

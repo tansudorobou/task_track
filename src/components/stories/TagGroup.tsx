@@ -23,10 +23,19 @@ export const colors = {
   yellow:
     "bg-yellow-100 text-yellow-700 border-yellow-200 hover:border-yellow-300 dark:bg-yellow-300/20 dark:text-yellow-400 dark:border-yellow-300/10 dark:hover:border-yellow-300/20",
   blue: "bg-blue-100 text-blue-700 border-blue-200 hover:border-blue-300 dark:bg-blue-400/20 dark:text-blue-300 dark:border-blue-400/10 dark:hover:border-blue-400/20",
+  red: "bg-red-100 text-red-700 border-red-200 hover:border-red-300 dark:bg-red-400/20 dark:text-red-300 dark:border-red-400/10 dark:hover:border-red-400/20",
+  purple:
+    "bg-purple-100 text-purple-700 border-purple-200 hover:border-purple-300 dark:bg-purple-400/20 dark:text-purple-300 dark:border-purple-400/10 dark:hover:border-purple-400/20",
+  orange:
+    "bg-orange-100 text-orange-700 border-orange-200 hover:border-orange-300 dark:bg-orange-400/20 dark:text-orange-300 dark:border-orange-400/10 dark:hover:border-orange-400/20",
+  pink: "bg-pink-100 text-pink-700 border-pink-200 hover:border-pink-300 dark:bg-pink-400/20 dark:text-pink-300 dark:border-pink-400/10 dark:hover:border-pink-400/20",
 }
 
 type Color = keyof typeof colors
 const ColorContext = createContext<Color>("gray")
+
+export const tagStyle = (c: Color | string) =>
+  `transition cursor-default text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1 whitespace-nowrap ${colors[c as Color] || colors.gray}`
 
 const tagStyles = tv({
   extend: focusRing,
@@ -37,6 +46,10 @@ const tagStyles = tv({
       green: "",
       yellow: "",
       blue: "",
+      red: "",
+      purple: "",
+      orange: "",
+      pink: "",
     },
     allowsRemoving: {
       true: "pr-1",

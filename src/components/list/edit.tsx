@@ -9,15 +9,15 @@ import {
   Heading,
   type Selection,
 } from "react-aria-components"
-import { calculateTimeDifferenceInMilliseconds } from "../Timer"
+import { calculateTimeDifferenceInSeconds } from "../Timer"
 import { ComvertServerDatetime, ConvertToISO8601 } from "../func"
 import { Button } from "../stories/Button"
 import { DateField } from "../stories/DateField"
 import { Dialog } from "../stories/Dialog"
 import { FieldError } from "../stories/Field"
-import { ListBox, ListBoxItem } from "../stories/ListBox"
+import { DropdownItem, ListBox } from "../stories/ListBox"
 import { Popover } from "../stories/Popover"
-import { Tag, TagGroup } from "../stories/TagGroup"
+import { Tag, TagGroup, tagStyle } from "../stories/TagGroup"
 import { TextField } from "../stories/TextField"
 import type { Dates, Item, Tag as TagType } from "../types"
 
@@ -66,7 +66,7 @@ export function EditDialog({
       start_time,
       end_time,
       tags: inputTagsArray,
-      interval: calculateTimeDifferenceInMilliseconds(
+      interval: calculateTimeDifferenceInSeconds(
         start_time,
         end_time,
         "yyyy-MM-dd HH:mm:ss",
@@ -125,9 +125,11 @@ export function EditDialog({
                 onSelectionChange={(keys) => setSelectedTags(keys)}
               >
                 {tags?.map((tag) => (
-                  <ListBoxItem id={tag.id} key={tag.id}>
-                    {tag.name}
-                  </ListBoxItem>
+                  <DropdownItem id={tag.id} key={tag.id}>
+                    <span className={tagStyle(tag.color || "gray")}>
+                      {tag.name}
+                    </span>
+                  </DropdownItem>
                 ))}
               </ListBox>
             </Popover>
@@ -136,7 +138,7 @@ export function EditDialog({
         <DateField
           label="開始時間"
           name="start_time"
-          granularity="second"
+          granularity="minute"
           isRequired
           defaultValue={parseDateTime(startTime)}
         >
@@ -145,7 +147,7 @@ export function EditDialog({
         <DateField
           label="終了時間"
           name="end_time"
-          granularity="second"
+          granularity="minute"
           isRequired
           defaultValue={parseDateTime(endTime)}
           validate={(value) => {
@@ -162,7 +164,7 @@ export function EditDialog({
             type="button"
             onPress={() => {
               setIsEditData(undefined)
-              dialog.dismiss
+              dialog.dismiss()
             }}
             variant="secondary"
           >

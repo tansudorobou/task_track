@@ -1,4 +1,4 @@
-use tauri::{ CustomMenuItem, Menu, Submenu};
+use tauri::{CustomMenuItem, Menu, Submenu};
 
 // それを返す関数を書く
 pub fn get_menu() -> Menu {
@@ -8,9 +8,7 @@ pub fn get_menu() -> Menu {
 
     let create_tag = CustomMenuItem::new("createTag".to_string(), "Create Tag");
     let edit_tag = CustomMenuItem::new("editTag".to_string(), "Edit Tag");
-    let tagsmenu= Submenu::new("Tags", Menu::new().add_item(create_tag).add_item(edit_tag));
+    let tagsmenu = Submenu::new("Tags", Menu::new().add_item(create_tag).add_item(edit_tag));
 
-    Menu::new()
-    .add_submenu(filemenu)
-    .add_submenu(tagsmenu)
+    Menu::new().add_submenu(filemenu).add_submenu(tagsmenu)
 }
