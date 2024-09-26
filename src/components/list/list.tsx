@@ -1,29 +1,26 @@
 import { DialogContainer } from "@adobe/react-spectrum"
-import { useSuspenseQuery } from "@tanstack/react-query"
 import { useAtom } from "jotai"
 import { useState } from "react"
 import { isTaskStartedAtom } from "../atom"
 import type { Dates, Item } from "../form/formUi"
-import { getTags } from "../invokes"
 import { useDeleteTask, useUpdateTask } from "../mutation"
 import { Tag, TagGroup } from "../stories/TagGroup"
+import type { Tag as TagType } from "../types"
 import { DeleteDialog } from "./delete"
 import { EditDialog } from "./edit"
 import { ListMenu } from "./menu"
 
 export default function TaskList({
   items,
+  tags,
 }: {
   items: (Item & Dates)[]
+  tags: TagType[]
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState<string | null>(null)
   const [isEditData, setIsEditData] = useState<(Item & Dates) | undefined>(
     undefined,
   )
-  const { data: tags } = useSuspenseQuery({
-    queryKey: ["tags"],
-    queryFn: getTags,
-  })
 
   const [isStarted] = useAtom(isTaskStartedAtom)
   const updateTaskMutation = useUpdateTask()

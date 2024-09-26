@@ -93,6 +93,11 @@ function TaskListLoader({ date }: { date: CalendarDate }) {
     queryFn: () => getTasksByDay(date.toString()),
   })
 
+  const { data: tags } = useSuspenseQuery({
+    queryKey: ["tags"],
+    queryFn: getTags,
+  })
+
   const [listOpen] = useAtom(listOpenAtom)
   const dateString = date.toString()
 
@@ -101,9 +106,9 @@ function TaskListLoader({ date }: { date: CalendarDate }) {
       {(() => {
         switch (listOpen) {
           case "calendar":
-            return <CalendarView items={items} date={dateString} />
+            return <CalendarView items={items} date={dateString} tags={tags} />
           default:
-            return <TaskList items={items} />
+            return <TaskList items={items} tags={tags} />
         }
       })()}
     </>
