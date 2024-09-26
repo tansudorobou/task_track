@@ -1,10 +1,12 @@
 import { listen } from "@tauri-apps/api/event"
-import { useAddTag, useIsCreateTagOpen } from "../mutation"
+import { useAtom } from "jotai"
+import { isCreateTagOpenAtom } from "../atom"
+import { useAddTag } from "../mutation"
 import type { Tag } from "../types"
 import TagsForm from "./form"
 
 export default function TagsCreate() {
-  const { createTagOpen, setCreateTagOpen } = useIsCreateTagOpen()
+  const [createTagOpen, setCreateTagOpen] = useAtom(isCreateTagOpenAtom)
   const addTag = useAddTag()
 
   const handleSubmit = async (event: React.FormEvent) => {

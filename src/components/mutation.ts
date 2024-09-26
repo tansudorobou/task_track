@@ -50,67 +50,6 @@ export function useDeleteTask() {
   })
 }
 
-export function useIsStarted() {
-  const queryClient = useQueryClient()
-  const IS_STARTED_QUERY_KEY = ["isStarted"] // 配列として定義
-
-  // `getQueryData`を配列形式のキーで呼び出し
-  const isStarted =
-    (queryClient.getQueryData(IS_STARTED_QUERY_KEY) as boolean) || false
-
-  const mutation = useMutation({
-    mutationFn: async (newState: boolean) => newState,
-    onMutate: (newState: boolean) => {
-      queryClient.setQueryData(IS_STARTED_QUERY_KEY, newState)
-    },
-  })
-
-  return {
-    isStarted,
-    setIsStarted: mutation.mutate,
-  }
-}
-
-export function useIsTagsOpen() {
-  const queryClient = useQueryClient()
-  const IS_TAGS_OPEN_QUERY_KEY = ["isTagsOpen"]
-
-  const isTagsOpen =
-    (queryClient.getQueryData(IS_TAGS_OPEN_QUERY_KEY) as boolean) || false
-
-  const mutation = useMutation({
-    mutationFn: async (newState: boolean) => newState,
-    onMutate: (newState: boolean) => {
-      queryClient.setQueryData(IS_TAGS_OPEN_QUERY_KEY, newState)
-    },
-  })
-
-  return {
-    isTagsOpen,
-    setIsTagsOpen: mutation.mutate,
-  }
-}
-
-export function useIsTagsEditOpen() {
-  const queryClient = useQueryClient()
-  const IS_TAGS_EDIT_OPEN_QUERY_KEY = ["isTagsEditOpen"]
-
-  const isTagsEditOpen =
-    (queryClient.getQueryData(IS_TAGS_EDIT_OPEN_QUERY_KEY) as boolean) || false
-
-  const mutation = useMutation({
-    mutationFn: async (newState: boolean) => newState,
-    onMutate: (newState: boolean) => {
-      queryClient.setQueryData(IS_TAGS_EDIT_OPEN_QUERY_KEY, newState)
-    },
-  })
-
-  return {
-    isTagsEditOpen,
-    setIsTagsEditOpen: mutation.mutate,
-  }
-}
-
 export function useUpdateTag() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -126,26 +65,6 @@ export function useUpdateTag() {
       })
     },
   })
-}
-
-export function useIsCreateTagOpen() {
-  const queryClient = useQueryClient()
-  const IS_CREATE_TAG_OPEN_QUERY_KEY = ["isCreateTagOpen"]
-
-  const createTagOpen =
-    (queryClient.getQueryData(IS_CREATE_TAG_OPEN_QUERY_KEY) as boolean) || false
-
-  const mutation = useMutation({
-    mutationFn: async (newState: boolean) => newState,
-    onMutate: (newState: boolean) => {
-      queryClient.setQueryData(IS_CREATE_TAG_OPEN_QUERY_KEY, newState)
-    },
-  })
-
-  return {
-    createTagOpen,
-    setCreateTagOpen: mutation.mutate,
-  }
 }
 
 export function useAddTag() {

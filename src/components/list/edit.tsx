@@ -37,7 +37,7 @@ export function EditDialog({
   const dialog = useDialogContainer()
   const startTime = ConvertToISO8601(item.start_time)
   const endTime = ConvertToISO8601(item.end_time)
-
+  console.log(item)
   const initialSelectedTags = new Set(
     item.tags
       .filter((t) => t !== "")

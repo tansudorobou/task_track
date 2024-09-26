@@ -11,10 +11,14 @@ import {
 } from "@tanstack/react-query"
 import { message } from "@tauri-apps/api/dialog"
 import { listen } from "@tauri-apps/api/event"
+import { useAtom } from "jotai"
 import { Suspense, useState } from "react"
+import { listOpenAtom } from "./components/atom"
 import TaskForm from "./components/form/form"
 import NewTaskForm from "./components/form/new"
+import ListSwitch from "./components/form/switch"
 import { getTags, getTasksByDay, getTop50Items } from "./components/invokes"
+import CalendarView from "./components/list/calendar"
 import TaskList from "./components/list/list"
 import { DatePicker } from "./components/stories/DatePicker"
 import TagsCreate from "./components/tags/create"
@@ -76,6 +80,7 @@ function TaskFormLoader({
       <div className="flex mx-5 w-12">
         <DatePicker defaultValue={date} onChange={setDate} key={"list"} />
         <NewTaskForm tags={tags} date={date} className="ml-5 hidden xs:block" />
+        <ListSwitch className="ml-5 whitespace-nowrap" />
       </div>
     </>
   )
@@ -87,5 +92,19 @@ function TaskListLoader({ date }: { date: CalendarDate }) {
     queryFn: () => getTasksByDay(date.toString()),
   })
 
-  return <TaskList items={items} />
+  const [listOpen] = useAtom(listOpenAtom)
+  const dateString = date.toString()
+
+  return (
+    <>
+      {(() => {
+        switch (listOpen) {
+          case "calendar":
+            return <CalendarView items={items} date={dateString} />
+          default:
+            return <TaskList items={items} />
+        }
+      })()}
+    </>
+  )
 }

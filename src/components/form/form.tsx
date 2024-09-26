@@ -1,11 +1,13 @@
 import type { CalendarDate } from "@internationalized/date"
 import { getWeek, parse } from "date-fns"
-import { useState } from "react"
+import { useAtom } from "jotai"
+import { useMemo, useState } from "react"
 import type { Selection } from "react-aria-components"
 import { v4 as uuidv4, v4 } from "uuid"
 import { calculateTimeDifferenceInSeconds } from "../Timer"
+import { isTaskStartedAtom } from "../atom"
 import { getTime, updateTime } from "../invokes"
-import { useCreateTask, useIsStarted, useUpdateTask } from "../mutation"
+import { useCreateTask, useUpdateTask } from "../mutation"
 import type { ComboxItem } from "../types"
 import { FormUi } from "./formUi"
 import type { Dates, Item, Tag } from "./formUi"
@@ -15,9 +17,9 @@ export default function TaskForm({
   items,
   date,
 }: { tags: Tag[]; items: ComboxItem[]; date: CalendarDate }) {
-  const initialData = createInitialData(date)
+  const initialData = useMemo(() => createInitialData(date), [date])
   const [data, setData] = useState<Item & Dates>(initialData)
-  const { isStarted, setIsStarted } = useIsStarted()
+  const [isStarted, setIsStarted] = useAtom(isTaskStartedAtom)
   const [selectedTags, setSelectedTags] = useState<Selection>(new Set([]))
   const addTaskMutation = useCreateTask()
   const updateTaskMutation = useUpdateTask()

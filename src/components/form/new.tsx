@@ -20,7 +20,6 @@ export default function NewTaskForm({
   const [task, setTask] = useState<(Item & Dates) | undefined>(initialData)
   const [isDialogOpen, setIsDialogOpen] = useState<string | null>(null)
   const createTaskMutation = useCreateTask()
-  console.log(isDialogOpen, initialData)
 
   return (
     <>

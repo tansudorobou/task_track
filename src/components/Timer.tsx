@@ -1,22 +1,23 @@
 import { invoke } from "@tauri-apps/api"
 import { differenceInSeconds, parse } from "date-fns"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 // Custom hook for updating time
 function useCurrentTime() {
   const [currentTime, setCurrentTime] = useState("")
 
-  const updateTime = useCallback(async () => {
-    await invoke("update_time")
-    const time: string = await invoke("get_time")
-    setCurrentTime(time)
-  }, [])
-
   useEffect(() => {
-    updateTime()
+    const updateTime = async () => {
+      await invoke("update_time")
+      const time: string = await invoke("get_time")
+      setCurrentTime(time)
+    }
+
+    updateTime() // 初期時間をセット
     const interval = setInterval(updateTime, 1000)
+
     return () => clearInterval(interval)
-  }, [updateTime])
+  }, [])
 
   return currentTime
 }
@@ -24,11 +25,7 @@ function useCurrentTime() {
 export function TimerComponent({
   start_time,
   className,
-}: { start_time: string; className: string }) {
-  if (start_time === "") {
-    return <div className={className}>00:00:00</div>
-  }
-
+}: { start_time: string; className?: string }) {
   const currentTime = useCurrentTime()
 
   const startTime = useMemo(
@@ -36,29 +33,30 @@ export function TimerComponent({
     [start_time],
   )
 
-  const diff = useMemo(() => {
-    const parsedTime = parse(currentTime, "yyyy-MM-dd HH:mm:ss", new Date())
-    return differenceInSeconds(parsedTime, startTime) || 0
-  }, [currentTime, startTime])
+  const diff =
+    differenceInSeconds(
+      parse(currentTime, "yyyy-MM-dd HH:mm:ss", new Date()),
+      startTime,
+    ) || 0
 
-  return <div className={className}>{millisecondsToTime(diff)}</div>
+  return <div className={className}>{secondsToTime(diff)}</div>
 }
 
-export function millisecondsToTime(milliseconds: number) {
-  // ミリ秒を日付オブジェクトに変換
-  const date = new Date(milliseconds)
+export function secondsToTime(seconds: number) {
+  // 秒をミリ秒に変換
+  const date = new Date(seconds * 1000)
 
   // タイムゾーンのオフセットを適用しないためにUTCを使用して時間をフォーマット
   const day = String(date.getUTCDate()).padStart(2, "0")
   const hours = String(date.getUTCHours()).padStart(2, "0")
   const minutes = String(date.getUTCMinutes()).padStart(2, "0")
-  const seconds = String(date.getUTCSeconds()).padStart(2, "0")
+  const secondsStr = String(date.getUTCSeconds()).padStart(2, "0")
 
   if (day !== "01") {
-    return `${day}d ${hours}:${minutes}:${seconds}`
+    return `${day}d ${hours}:${minutes}:${secondsStr}`
   }
   // フォーマットされた時間を返す
-  return `${hours}:${minutes}:${seconds}`
+  return `${hours}:${minutes}:${secondsStr}`
 }
 
 export function calculateTimeDifferenceInSeconds(

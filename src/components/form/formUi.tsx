@@ -126,10 +126,14 @@ export function FormUi({
             </Popover>
           </DialogTrigger>
           <RecordButton isStarted={isStarted} isPending={isPending} />
-          <TimerComponent
-            start_time={data?.start_time}
-            className="hidden xs:block"
-          />
+          {data.start_time === "" ? (
+            <div className="hidden xs:block sm:flex">00:00:00</div>
+          ) : (
+            <TimerComponent
+              start_time={data.start_time}
+              className="hidden xs:block"
+            />
+          )}
         </div>
       </Form>
     </div>

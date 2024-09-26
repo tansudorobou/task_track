@@ -1,13 +1,15 @@
 import { DialogContainer } from "@adobe/react-spectrum"
 import { useQuery } from "@tanstack/react-query"
 import { listen } from "@tauri-apps/api/event"
+import { useAtom } from "jotai"
 import { MinusCircle } from "lucide-react"
 import { useState } from "react"
 import { Heading } from "react-aria-components"
+import { isTagsOpenAtom } from "../atom"
 import { getTags } from "../invokes"
 import { DeleteDialog } from "../list/delete"
 import { ListMenu } from "../list/menu"
-import { useDeleteTag, useIsTagsOpen, useUpdateTag } from "../mutation"
+import { useDeleteTag, useUpdateTag } from "../mutation"
 import { Button } from "../stories/Button"
 import { Dialog } from "../stories/Dialog"
 import { colors } from "../stories/TagGroup"
@@ -20,7 +22,7 @@ export function TagsList() {
     queryFn: getTags,
   })
 
-  const { isTagsOpen, setIsTagsOpen } = useIsTagsOpen()
+  const [isTagsOpen, setIsTagsOpen] = useAtom(isTagsOpenAtom)
   const [isTagsItem, setIsTagsItem] = useState<Tag | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState<string | null>(null)
 
