@@ -1,6 +1,7 @@
 import { atom } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 
-export const listOpenAtom = atom<"list" | "calendar">("list")
+export const listOpenAtom = atomWithStorage("listOpen", "list")
 
 export const isTaskStartedAtom = atom(false)
 

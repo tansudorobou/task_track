@@ -1,17 +1,14 @@
 import jaLocale from "@fullcalendar/core/locales/ja"
 import FullCalendar from "@fullcalendar/react"
 import timeGridPlugin from "@fullcalendar/timegrid"
-import { parse } from "date-fns"
+import { format, isBefore, parse, startOfDay, subHours } from "date-fns"
 import { useMemo, useState } from "react"
 import type { Dates, Item } from "../types"
 import "./calendarStyle.css"
 import { DialogContainer } from "@adobe/react-spectrum"
-import { MinusCircle } from "lucide-react"
-import { Heading } from "react-aria-components"
-import { Button } from "../stories/Button"
-import { Dialog } from "../stories/Dialog"
-import { Tag, TagGroup } from "../stories/TagGroup"
+import { useUpdateTask } from "../mutation"
 import type { Tag as TagType } from "../types"
+import { EditDialog } from "./edit"
 
 export default function CalendarView({
   items,
@@ -22,7 +19,11 @@ export default function CalendarView({
   date: string
   tags: TagType[]
 }) {
-  const [popupInfo, setPopupInfo] = useState<(Item & Dates) | null>(null)
+  const [popupInfo, setPopupInfo] = useState<(Item & Dates) | undefined>(
+    undefined,
+  )
+
+  const updateTaskMutation = useUpdateTask()
 
   const events = useMemo(
     () =>
@@ -42,13 +43,18 @@ export default function CalendarView({
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const handleEventClick = (clickInfo: any) => {
     const id = clickInfo.event.id
-
     const item = items.find((item) => item.id === id)
-
     if (item) {
       setPopupInfo(item)
     }
   }
+
+  const formattedTime = format(
+    isBefore(subHours(new Date(), 2), startOfDay(new Date()))
+      ? startOfDay(new Date())
+      : subHours(new Date(), 2),
+    "HH:mm",
+  )
 
   return (
     <>
@@ -61,39 +67,20 @@ export default function CalendarView({
           events={events}
           allDaySlot={false}
           height={"84vh"}
-          scrollTime={new Date().toTimeString().slice(0, 5)}
+          scrollTime={formattedTime}
           nowIndicator={true}
           initialDate={date}
           eventClick={handleEventClick}
         />
       </div>
-      <DialogContainer onDismiss={() => setPopupInfo(null)}>
+      <DialogContainer onDismiss={() => setPopupInfo(undefined)}>
         {popupInfo && (
-          <Dialog>
-            <div className="flex items-center">
-              <Heading className="font-bold">{popupInfo.title}</Heading>
-              <Button
-                type="button"
-                variant="icon"
-                className="ml-auto"
-                onPress={() => setPopupInfo(null)}
-              >
-                <MinusCircle className="text-red-400" />
-              </Button>
-            </div>
-            <div className="my-2 ml-1">
-              {popupInfo.start_time.slice(11, 16)} ~{" "}
-              {popupInfo.end_time.slice(11, 16)}
-            </div>
-            <TagGroup
-              className="gap-2 pb-2"
-              items={popupInfo.tags.map(
-                (tag) => tags.find((t) => t.name === tag) as TagType,
-              )}
-            >
-              {(tag) => <Tag color={tag.color}>{tag.name}</Tag>}
-            </TagGroup>
-          </Dialog>
+          <EditDialog
+            item={popupInfo}
+            tags={tags}
+            setIsEditData={setPopupInfo}
+            mutate={updateTaskMutation}
+          />
         )}
       </DialogContainer>
     </>
