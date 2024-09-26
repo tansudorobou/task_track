@@ -16,7 +16,7 @@ import { colors } from "../stories/TagGroup"
 import type { Tag } from "../types"
 import TagsForm from "./form"
 
-export function TagsList() {
+export default function TagsList() {
   const { data: tags } = useQuery({
     queryKey: ["tags"],
     queryFn: getTags,

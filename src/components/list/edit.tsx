@@ -151,7 +151,7 @@ export function EditDialog({
           isRequired
           defaultValue={parseDateTime(endTime)}
           validate={(value) => {
-            if (value < parseDateTime(startTime)) {
+            if (value > parseDateTime(startTime)) {
               return "開始時間より後の時間を選択してください"
             }
           }}

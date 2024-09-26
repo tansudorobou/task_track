@@ -12,17 +12,18 @@ import {
 import { message } from "@tauri-apps/api/dialog"
 import { listen } from "@tauri-apps/api/event"
 import { useAtom } from "jotai"
-import { Suspense, useState } from "react"
+import { Suspense, lazy, useState } from "react"
 import { listOpenAtom } from "./components/atom"
-import TaskForm from "./components/form/form"
-import NewTaskForm from "./components/form/new"
-import ListSwitch from "./components/form/switch"
 import { getTags, getTasksByDay, getTop50Items } from "./components/invokes"
-import CalendarView from "./components/list/calendar"
 import TaskList from "./components/list/list"
 import { DatePicker } from "./components/stories/DatePicker"
-import TagsCreate from "./components/tags/create"
-import { TagsList } from "./components/tags/list"
+
+const TaskForm = lazy(() => import("./components/form/form"))
+const NewTaskForm = lazy(() => import("./components/form/new"))
+const ListSwitch = lazy(() => import("./components/form/switch"))
+const CalendarView = lazy(() => import("./components/list/calendar"))
+const TagsCreate = lazy(() => import("./components/tags/create"))
+const TagsList = lazy(() => import("./components/tags/list"))
 
 const queryClient = new QueryClient()
 
