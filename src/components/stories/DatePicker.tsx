@@ -35,7 +35,7 @@ export function DatePicker<T extends DateValue>({
       )}
     >
       {label && <Label>{label}</Label>}
-      <FieldGroup className="min-w-[208px] w-auto">
+      <FieldGroup className="min-w-[180px] w-auto">
         <DateInput className="flex-1 min-w-[150px] px-2 py-1.5 text-sm" />
         <Button variant="icon" className="w-6 mr-1 rounded outline-offset-0">
           <CalendarIcon aria-hidden className="w-4 h-4" />

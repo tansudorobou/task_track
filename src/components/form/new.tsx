@@ -1,5 +1,6 @@
 import { DialogContainer } from "@adobe/react-spectrum"
 import type { CalendarDate } from "@internationalized/date"
+import { FileEdit } from "lucide-react"
 import { useState } from "react"
 import { EditDialog } from "../list/edit"
 import { useCreateTask } from "../mutation"
@@ -25,11 +26,14 @@ export default function NewTaskForm({
     <>
       <div className={className}>
         <Button
-          className="whitespace-nowrap"
+          className="whitespace-nowrap px-2 xs:px-5"
           variant="secondary"
           onPress={() => setIsDialogOpen("new")}
         >
-          新規タスク
+          <div className="flex items-center gap-1">
+            <FileEdit size={20} className="text-gray-500" />
+            <div className="hidden sm:block">新規タスク</div>
+          </div>
         </Button>
       </div>
       <DialogContainer onDismiss={() => setIsDialogOpen(null)}>

@@ -56,11 +56,17 @@ pub fn upgrade_database_if_needed(
 
         tx.execute_batch(
             "
-      CREATE TABLE tags (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        color TEXT
-      );",
+      CREATE INDEX idx_date ON tasks (date);
+      ",
+        )?;
+
+        tx.execute_batch(
+            "
+          CREATE TABLE tags (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            color TEXT
+            );",
         )?;
 
         tx.commit()?;
@@ -162,6 +168,40 @@ pub fn get_tasks_by_day(day: &str, db: &Connection) -> Result<Vec<Task>, rusqlit
     let mut statement = db.prepare("SELECT * FROM tasks WHERE date = :date")?;
     let mut rows = statement.query(named_params! {
       ":date": day,
+    })?;
+    let mut tasks = Vec::new();
+    while let Some(row) = rows.next()? {
+        let task = Task {
+            id: row.get::<_, String>("id")?,
+            week_number: row.get::<_, i32>("week_number")?,
+            date: row.get::<_, String>("date")?,
+            title: row.get::<_, String>("title")?,
+            tags: row
+                .get::<_, String>("tags")?
+                .split(",")
+                .map(|s| s.to_string())
+                .collect(),
+            content: row.get::<_, Option<String>>("content")?,
+            start_time: row.get::<_, String>("start_time")?,
+            end_time: row.get::<_, Option<String>>("end_time")?,
+            interval: row.get::<_, i32>("interval")?,
+        };
+        tasks.push(task);
+    }
+
+    Ok(tasks)
+}
+
+pub fn get_tasks_by_date_range(
+    start_date: &str,
+    end_date: &str,
+    db: &Connection,
+) -> Result<Vec<Task>, rusqlite::Error> {
+    let mut statement =
+        db.prepare("SELECT * FROM tasks WHERE date BETWEEN :start_date AND :end_date")?;
+    let mut rows = statement.query(named_params! {
+      ":start_date": start_date,
+      ":end_date": end_date,
     })?;
     let mut tasks = Vec::new();
     while let Some(row) = rows.next()? {

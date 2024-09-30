@@ -149,11 +149,6 @@ export function EditDialog({
           granularity="minute"
           isRequired
           defaultValue={parseDateTime(endTime)}
-          validate={(value) => {
-            if (value.compare(parseDateTime(startTime)) < 0) {
-              return "開始時間より後の時間を選択してください"
-            }
-          }}
         >
           <FieldError />
         </DateField>

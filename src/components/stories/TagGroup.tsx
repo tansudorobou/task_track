@@ -16,6 +16,7 @@ import { tv } from "tailwind-variants"
 import { Description, Label } from "./Field"
 import { focusRing } from "./utils"
 
+// change the colors and export them
 export const colors = {
   gray: "bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600 dark:hover:border-zinc-500",
   green:
@@ -34,9 +35,11 @@ export const colors = {
 type Color = keyof typeof colors
 const ColorContext = createContext<Color>("gray")
 
+// add whitespace-nowrap to the tagStyle
 export const tagStyle = (c: Color | string) =>
   `transition cursor-default text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1 whitespace-nowrap ${colors[c as Color] || colors.gray}`
 
+// add whitespace-nowrap to the tagStyles and add the color variant
 const tagStyles = tv({
   extend: focusRing,
   base: "transition cursor-default text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1 whitespace-nowrap",

@@ -31,8 +31,8 @@ export default function TaskList({
   }
 
   return (
-    <div className="w-full">
-      <ul className="mx-5">
+    <div className="w-full bg-opacity-100">
+      <ul className="mx-1 xs:mx-5">
         {items?.map((item) => (
           <li
             key={item.id}

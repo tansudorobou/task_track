@@ -1,9 +1,5 @@
 import { Provider, defaultTheme } from "@adobe/react-spectrum"
-import {
-  type CalendarDate,
-  fromDate,
-  toCalendarDate,
-} from "@internationalized/date"
+import type { CalendarDate } from "@internationalized/date"
 import {
   QueryClient,
   QueryClientProvider,
@@ -11,10 +7,20 @@ import {
 } from "@tanstack/react-query"
 import { message } from "@tauri-apps/api/dialog"
 import { listen } from "@tauri-apps/api/event"
-import { useAtom } from "jotai"
-import { Suspense, lazy, useState } from "react"
-import { listOpenAtom } from "./components/atom"
-import { getTags, getTasksByDay, getTop50Items } from "./components/invokes"
+import { useAtom, useAtomValue } from "jotai"
+import { Suspense, lazy } from "react"
+import {
+  dateAtom,
+  listOpenAtom,
+  weekEndAtom,
+  weekOpenAtom,
+  weekStartAtom,
+} from "./components/atom"
+import {
+  getTags,
+  getTasksByDateRange,
+  getTop50Items,
+} from "./components/invokes"
 import TaskList from "./components/list/list"
 import { DatePicker } from "./components/stories/DatePicker"
 
@@ -32,15 +38,13 @@ listen("export", async (envent) => {
 })
 
 function App() {
-  const zonedDateTime = fromDate(new Date(), "Asia/Tokyo")
-  const calendarDate: CalendarDate = toCalendarDate(zonedDateTime)
-  const [date, setDate] = useState<CalendarDate>(calendarDate)
+  const [date, setDate] = useAtom(dateAtom)
 
   return (
     <QueryClientProvider client={queryClient}>
       <Provider theme={defaultTheme} colorScheme="light">
-        <div className="max-w-full max-h-full">
-          <div className="fixed z-40 w-full bg-gray-50 pb-2">
+        <div className="max-w-full h-screen">
+          <div className="fixed z-40 w-full bg-opacity-100 pb-2">
             <Suspense fallback={<div>Loading...</div>} key={"form"}>
               <TaskFormLoader date={date} setDate={setDate} />
             </Suspense>
@@ -75,40 +79,56 @@ function TaskFormLoader({
 
   return (
     <>
-      <div className="mx-5">
+      <div className="mx-1 xs:mx-5">
         <TaskForm tags={tags} items={items} date={date} />
       </div>
-      <div className="flex mx-5 w-12">
+      <div className="flex mx-1 xs:mx-5">
         <DatePicker defaultValue={date} onChange={setDate} key={"list"} />
-        <NewTaskForm tags={tags} date={date} className="ml-5 hidden xs:block" />
-        <ListSwitch className="ml-5 whitespace-nowrap" />
+        <NewTaskForm tags={tags} date={date} className="ml-1 xs:ml-5" />
+        <ListSwitch className="ml-1 xs:ml-5 whitespace-nowrap px-2 xs:px-5" />
       </div>
     </>
   )
 }
 
 function TaskListLoader({ date }: { date: CalendarDate }) {
-  const { data: items } = useSuspenseQuery({
-    queryKey: ["tasks", date.toString()],
-    queryFn: () => getTasksByDay(date.toString()),
-  })
+  const weekStart = useAtomValue(weekStartAtom)
+  const weekEnd = useAtomValue(weekEndAtom)
 
   const { data: tags } = useSuspenseQuery({
     queryKey: ["tags"],
     queryFn: getTags,
   })
 
+  const { data: items } = useSuspenseQuery({
+    queryKey: ["tasks", weekStart, weekEnd],
+    queryFn: () => getTasksByDateRange(weekStart, weekEnd),
+  })
+
   const [listOpen] = useAtom(listOpenAtom)
+  const [weekOpen] = useAtom(weekOpenAtom)
   const dateString = date.toString()
+
+  const filteredItems =
+    weekOpen === "day"
+      ? items.filter((item) => item.date === dateString)
+      : items
 
   return (
     <>
       {(() => {
         switch (listOpen) {
           case "calendar":
-            return <CalendarView items={items} date={dateString} tags={tags} />
+            return (
+              <CalendarView
+                items={filteredItems}
+                date={dateString}
+                tags={tags}
+                timeGrid={weekOpen === "week" ? "timeGridWeek" : "timeGridDay"}
+              />
+            )
           default:
-            return <TaskList items={items} tags={tags} />
+            return <TaskList items={filteredItems} tags={tags} />
         }
       })()}
     </>

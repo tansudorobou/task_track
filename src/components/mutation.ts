@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useAtomValue } from "jotai"
+import { weekEndAtom, weekStartAtom } from "./atom"
 import {
   addTag,
   addTask,
@@ -11,41 +13,59 @@ import type { Dates, Item, Tag } from "./types"
 
 export function useUpdateTask() {
   const queryClient = useQueryClient()
+  const weekStart = useAtomValue(weekStartAtom)
+  const weekEnd = useAtomValue(weekEndAtom)
+
   return useMutation({
     mutationFn: (jsonData: Item & Dates) => updateTask(jsonData),
     onMutate: (jsonData: Item & Dates) => {
-      queryClient.setQueryData(["tasks", jsonData.date], (data: Item[]) => {
-        return data.map((item) => {
-          if (item.id === jsonData.id) {
-            return jsonData
-          }
-          return item
-        })
-      })
+      queryClient.setQueryData(
+        ["tasks", weekStart, weekEnd],
+        (data: Item[]) => {
+          return data.map((item) => {
+            if (item.id === jsonData.id) {
+              return jsonData
+            }
+            return item
+          })
+        },
+      )
     },
   })
 }
 
 export function useCreateTask() {
   const queryClient = useQueryClient()
+  const weekStart = useAtomValue(weekStartAtom)
+  const weekEnd = useAtomValue(weekEndAtom)
+
   return useMutation({
     mutationFn: (jsonData: Item & Dates) => addTask(jsonData),
     onMutate: (jsonData: Item & Dates) => {
-      queryClient.setQueryData(["tasks", jsonData.date], (data: Item[]) => {
-        return [...data, jsonData]
-      })
+      queryClient.setQueryData(
+        ["tasks", weekStart, weekEnd],
+        (data: Item[]) => {
+          return [...data, jsonData]
+        },
+      )
     },
   })
 }
 
 export function useDeleteTask() {
   const queryClient = useQueryClient()
+  const weekStart = useAtomValue(weekStartAtom)
+  const weekEnd = useAtomValue(weekEndAtom)
+
   return useMutation({
     mutationFn: (jsonData: Item & Dates) => removeTask(jsonData.id),
     onMutate: (jsonData: Item & Dates) => {
-      queryClient.setQueryData(["tasks", jsonData.date], (data: Item[]) => {
-        return data.filter((item) => item.id !== jsonData.id)
-      })
+      queryClient.setQueryData(
+        ["tasks", weekStart, weekEnd],
+        (data: Item[]) => {
+          return data.filter((item) => item.id !== jsonData.id)
+        },
+      )
     },
   })
 }

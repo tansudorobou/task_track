@@ -14,10 +14,12 @@ export default function CalendarView({
   items,
   date,
   tags,
+  timeGrid,
 }: {
   items: (Item & Dates)[]
   date: string
   tags: TagType[]
+  timeGrid: "timeGridDay" | "timeGridWeek"
 }) {
   const [popupInfo, setPopupInfo] = useState<(Item & Dates) | undefined>(
     undefined,
@@ -25,20 +27,18 @@ export default function CalendarView({
 
   const updateTaskMutation = useUpdateTask()
 
-  const events = useMemo(
-    () =>
-      items.map((item) => ({
-        id: item.id,
-        title: item.title,
-        start: parse(item.start_time, "yyyy-MM-dd HH:mm:ss", new Date()),
-        end: parse(item.end_time, "yyyy-MM-dd HH:mm:ss", new Date()),
-        tags: item.tags,
-        interval: item.interval,
-        date: item.date,
-        week_number: item.week_number,
-      })),
-    [items],
-  )
+  const events = useMemo(() => {
+    return items.map((item) => ({
+      id: item.id,
+      title: item.title,
+      start: parse(item.start_time, "yyyy-MM-dd HH:mm:ss", new Date()),
+      end: parse(item.end_time, "yyyy-MM-dd HH:mm:ss", new Date()),
+      tags: item.tags,
+      interval: item.interval,
+      date: item.date,
+      week_number: item.week_number,
+    }))
+  }, [items])
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const handleEventClick = (clickInfo: any) => {
@@ -60,8 +60,9 @@ export default function CalendarView({
     <>
       <div className="md:w-3/4 mx-auto max-h-max mt-2">
         <FullCalendar
+          key={timeGrid}
           plugins={[timeGridPlugin]}
-          initialView="timeGridDay"
+          initialView={timeGrid}
           headerToolbar={false}
           locale={jaLocale}
           events={events}

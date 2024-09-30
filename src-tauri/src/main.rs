@@ -48,6 +48,17 @@ fn get_top_50_tasks(app_handle: AppHandle) -> Vec<structs::ComboxTask> {
 }
 
 #[tauri::command]
+fn get_tasks_by_date_range(
+    app_handle: AppHandle,
+    start_date: &str,
+    end_date: &str,
+) -> Vec<structs::Task> {
+    app_handle
+        .db(|db| database::get_tasks_by_date_range(start_date, end_date, db))
+        .unwrap()
+}
+
+#[tauri::command]
 fn add_task(app_handle: AppHandle, task: Task) {
     app_handle.db(|db| database::add_task(&task, db)).unwrap();
 }
@@ -105,7 +116,8 @@ fn main() {
             remove_tag,
             update_tag,
             get_top_50_tasks,
-            get_tasks_by_day
+            get_tasks_by_day,
+            get_tasks_by_date_range
         ])
         .menu(menus)
         .on_menu_event(|event| match event.menu_item_id() {

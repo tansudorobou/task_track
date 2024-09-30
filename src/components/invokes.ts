@@ -13,6 +13,17 @@ export async function getTasksByDay(day: string) {
   return (await invoke("get_tasks_by_day", { day })) as (Item & Dates)[]
 }
 
+export async function getTasksByWeek(week: string) {
+  return (await invoke("get_tasks_by_week", { week })) as (Item & Dates)[]
+}
+
+export async function getTasksByDateRange(startDate: string, endDate: string) {
+  return (await invoke("get_tasks_by_date_range", {
+    startDate,
+    endDate,
+  })) as (Item & Dates)[]
+}
+
 export async function getTop50Items() {
   return (await invoke("get_top_50_tasks")) as ComboxItem[]
 }
