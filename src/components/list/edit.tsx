@@ -122,6 +122,7 @@ export function EditDialog({
                 selectionMode="multiple"
                 selectedKeys={selectedTags}
                 onSelectionChange={(keys) => setSelectedTags(keys)}
+                className={"h-60 overflow-y-auto"}
               >
                 {tags?.map((tag) => (
                   <DropdownItem id={tag.id} key={tag.id}>

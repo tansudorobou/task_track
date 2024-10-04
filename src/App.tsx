@@ -8,7 +8,7 @@ import {
 import { message } from "@tauri-apps/api/dialog"
 import { listen } from "@tauri-apps/api/event"
 import { useAtom, useAtomValue } from "jotai"
-import { Suspense, lazy } from "react"
+import { Suspense, lazy, useState } from "react"
 import {
   dateAtom,
   listOpenAtom,
@@ -16,6 +16,7 @@ import {
   weekOpenAtom,
   weekStartAtom,
 } from "./components/atom"
+import ChartView from "./components/chart/view"
 import {
   getTags,
   getTasksByDateRange,
@@ -44,7 +45,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Provider theme={defaultTheme} colorScheme="light">
         <div className="max-w-full h-screen">
-          <div className="fixed z-40 w-full bg-opacity-100 pb-2">
+          <div className="fixed z-40 w-full bg-gray-50 pb-2">
             <Suspense fallback={<div>Loading...</div>} key={"form"}>
               <TaskFormLoader date={date} setDate={setDate} />
             </Suspense>
@@ -86,6 +87,7 @@ function TaskFormLoader({
         <DatePicker defaultValue={date} onChange={setDate} key={"list"} />
         <NewTaskForm tags={tags} date={date} className="ml-1 xs:ml-5" />
         <ListSwitch className="ml-1 xs:ml-5 whitespace-nowrap px-2 xs:px-5" />
+        <ChartView className="ml-1 xs:ml-5" />
       </div>
     </>
   )
