@@ -8,7 +8,7 @@ import {
 import { message } from "@tauri-apps/api/dialog"
 import { listen } from "@tauri-apps/api/event"
 import { useAtom, useAtomValue } from "jotai"
-import { Suspense, lazy, useState } from "react"
+import { Suspense, lazy } from "react"
 import {
   dateAtom,
   listOpenAtom,
@@ -85,9 +85,9 @@ function TaskFormLoader({
       </div>
       <div className="flex mx-1 xs:mx-5">
         <DatePicker defaultValue={date} onChange={setDate} key={"list"} />
-        <NewTaskForm tags={tags} date={date} className="ml-1 xs:ml-5" />
-        <ListSwitch className="ml-1 xs:ml-5 whitespace-nowrap px-2 xs:px-5" />
-        <ChartView className="ml-1 xs:ml-5" />
+        <NewTaskForm tags={tags} date={date} className="ml-1 xs:ml-4" />
+        <ListSwitch className="ml-1 xs:ml-3 whitespace-nowrap px-2 xs:px-5" />
+        <ChartView className="ml-1 xs:ml-3" />
       </div>
     </>
   )

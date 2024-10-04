@@ -32,7 +32,7 @@ export default function TaskList({
 
   return (
     <div className="w-full bg-opacity-100">
-      <ul className="mx-1 xs:mx-5">
+      <ul className="mx-1 xs:mx-5 pb-2">
         {items?.map((item) => (
           <li
             key={item.id}
