@@ -24,13 +24,15 @@ export default function AnalysisListComponent({
           {titleChartData?.map((item) => (
             <li
               key={item.name}
-              className="flex gap-2 border border-gray-300 rounded-md my-2 px-4 items-center bg-white/90 h-10"
+              className="flex gap-2 border border-gray-300 rounded-md my-2 px-4 items-center bg-white/90 h-10 min-w-[181px]"
             >
-              <div className="w-2/4 whitespace-nowrap text-ellipsis overflow-hidden">
+              <div className="w-3/4 whitespace-nowrap text-ellipsis overflow-hidden">
                 {item.name}
               </div>
               <div className="flex ml-auto gap-2 items-center">
-                <div className="text-right">{Math.ceil(item.value)} 分</div>
+                <div className="text-right whitespace-nowrap">
+                  {Math.ceil(item.value)} 分
+                </div>
               </div>
             </li>
           ))}
@@ -42,12 +44,12 @@ export default function AnalysisListComponent({
           {tagChartData?.map((item) => (
             <li
               key={item.name}
-              className="flex gap-2 border border-gray-300 rounded-md my-2 px-4 items-center bg-white/90 h-10"
+              className="flex gap-2 border border-gray-300 rounded-md my-2 px-4 items-center bg-white/90 h-10 min-w-[181px]"
             >
-              <div className="w-2/4 whitespace-nowrap text-ellipsis overflow-hidden">
+              <div className="w-3/4 whitespace-nowrap text-ellipsis overflow-hidden">
                 {item.name}
               </div>
-              <div className="flex ml-auto gap-2 items-center">
+              <div className="flex ml-auto gap-2 items-center whitespace-nowrap">
                 <div className="text-right">{Math.ceil(item.value)} 分</div>
               </div>
             </li>
