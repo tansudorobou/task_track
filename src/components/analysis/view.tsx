@@ -3,7 +3,7 @@ import { LucideAreaChart } from "lucide-react"
 import { useState } from "react"
 import { Button } from "../stories/Button"
 import { Dialog } from "../stories/Dialog"
-import PieChartComponent from "./pie"
+import AnalysisLoaderComponent from "./loader"
 
 export default function ChartView({
   className,
@@ -18,18 +18,18 @@ export default function ChartView({
         <Button
           className="whitespace-nowrap px-2 xs:px-5"
           variant="secondary"
-          onPress={() => setIsDialogOpen("title")}
+          onPress={() => setIsDialogOpen("chart")}
         >
           <div className="flex items-center gap-1">
             <LucideAreaChart size={20} className="text-gray-500" />
-            <div className="hidden md:block">チャート表示</div>
+            <div className="hidden md:block">分析表示</div>
           </div>
         </Button>
       </div>
       <DialogContainer onDismiss={() => setIsDialogOpen(null)}>
-        {isDialogOpen === "title" && (
+        {isDialogOpen === "chart" && (
           <Dialog>
-            <PieChartComponent />
+            <AnalysisLoaderComponent />
           </Dialog>
         )}
       </DialogContainer>

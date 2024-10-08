@@ -55,7 +55,7 @@ function ButtonLabel({ listOpen }: { listOpen: string }) {
 
 function WeekButtonLabel({ weekOpen }: { weekOpen: string }) {
   const divClassName = "flex items-center gap-1"
-  const titleClassName = "hidden md:block w-20"
+  const titleClassName = "hidden md:block w-16"
 
   return weekOpen === "day" ? (
     <div className={divClassName}>
