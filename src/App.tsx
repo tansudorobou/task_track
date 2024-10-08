@@ -9,7 +9,6 @@ import { message } from "@tauri-apps/api/dialog"
 import { listen } from "@tauri-apps/api/event"
 import { useAtom, useAtomValue } from "jotai"
 import { Suspense, lazy } from "react"
-import ChartView from "./components/analysis/view"
 import {
   dateAtom,
   listOpenAtom,
@@ -31,6 +30,7 @@ const ListSwitch = lazy(() => import("./components/form/switch"))
 const CalendarView = lazy(() => import("./components/list/calendar"))
 const TagsCreate = lazy(() => import("./components/tags/create"))
 const TagsList = lazy(() => import("./components/tags/list"))
+const ChartView = lazy(() => import("./components/analysis/view"))
 
 const queryClient = new QueryClient()
 
@@ -96,7 +96,7 @@ function TaskFormLoader({
 function TaskListLoader({ date }: { date: CalendarDate }) {
   const weekStart = useAtomValue(weekStartAtom)
   const weekEnd = useAtomValue(weekEndAtom)
-  console.log(weekStart, weekEnd)
+
   const { data: tags } = useSuspenseQuery({
     queryKey: ["tags"],
     queryFn: getTags,
