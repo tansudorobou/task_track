@@ -5,7 +5,7 @@ import {
   QueryClientProvider,
   useSuspenseQuery,
 } from "@tanstack/react-query"
-import { message } from "@tauri-apps/api/dialog"
+import { message } from "@tauri-apps/plugin-dialog"
 import { listen } from "@tauri-apps/api/event"
 import { useAtom, useAtomValue } from "jotai"
 import { Suspense, lazy } from "react"
