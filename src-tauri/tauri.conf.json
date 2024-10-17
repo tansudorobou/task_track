@@ -18,7 +18,7 @@
   },
   "productName": "Task Track",
   "mainBinaryName": "Task Track",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "identifier": "TaskTrack",
   "plugins": {},
   "app": {
