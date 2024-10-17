@@ -11,7 +11,7 @@ mod structs;
 use export::export_tasks;
 use state::{AppState, ServiceAccess, TimeState};
 use structs::{Tag, Task};
-use tauri::menu::{AboutMetadata, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
+use tauri::menu::{MenuBuilder, MenuItemBuilder, SubmenuBuilder};
 use tauri::{AppHandle, Emitter, Manager, State};
 
 // Time management
@@ -124,51 +124,26 @@ fn main() {
             let db =
                 database::initialize_database(&handle).expect("Database initialize should succeed");
             *app_state.db.lock().unwrap() = Some(db);
-            let close = MenuItemBuilder::new("Close")
-                .id("close")
-                .accelerator("CmdOrControl+W")
-                .build(app)?;
+            let close = MenuItemBuilder::new("Close").id("close").build(app)?;
 
-            let export = MenuItemBuilder::new("Export")
-                .id("export")
-                .accelerator("CmdOrControl+E")
-                .build(app)?;
+            let export = MenuItemBuilder::new("Export").id("export").build(app)?;
 
             let file_submenu = SubmenuBuilder::new(app, "File")
-                .about(Some(AboutMetadata {
-                    ..Default::default()
-                }))
-                .separator()
                 .item(&close)
                 .separator()
                 .item(&export)
-                .separator()
-                .services()
-                .separator()
-                .hide()
-                .hide_others()
-                .quit()
                 .build()?;
 
             let create_tag = MenuItemBuilder::new("Create Tag")
                 .id("createTag")
-                .accelerator("CmdOrControl+T")
                 .build(app)?;
 
-            let edit_tag = MenuItemBuilder::new("Edit Tag")
-                .id("editTag")
-                .accelerator("CmdOrControl+Shift+T")
-                .build(app)?;
+            let edit_tag = MenuItemBuilder::new("Edit Tag").id("editTag").build(app)?;
 
             let tags_submenu = SubmenuBuilder::new(app, "Tags")
-                .about(Some(AboutMetadata {
-                    ..Default::default()
-                }))
-                .separator()
                 .item(&create_tag)
                 .separator()
                 .item(&edit_tag)
-                .separator()
                 .build()?;
 
             let menu = MenuBuilder::new(app)
