@@ -1,6 +1,6 @@
 use rusqlite::{named_params, Connection};
 use std::fs;
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 
 use crate::structs::{ComboxTask, Tag, Task};
 
@@ -10,9 +10,10 @@ const CURRENT_DB_VERSION: u32 = 1;
 /// if it's out of date.
 pub fn initialize_database(app_handle: &AppHandle) -> Result<Connection, rusqlite::Error> {
     let app_dir: std::path::PathBuf = app_handle
-        .path_resolver()
+        .path()
         .app_data_dir()
         .expect("The app data directory should exist.");
+
     fs::create_dir_all(&app_dir).expect("The app data directory should be created.");
     let sqlite_path = app_dir.join("TaskTrack.sqlite");
 

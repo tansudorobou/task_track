@@ -5,15 +5,14 @@
 
 mod database;
 mod export;
-mod menu;
 mod state;
 mod structs;
 
 use export::export_tasks;
-use menu::get_menu;
 use state::{AppState, ServiceAccess, TimeState};
 use structs::{Tag, Task};
-use tauri::{AppHandle, Manager, State};
+use tauri::menu::{AboutMetadata, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
+use tauri::{AppHandle, Emitter, Manager, State};
 
 // Time management
 #[tauri::command]
@@ -95,8 +94,6 @@ fn update_tag(app_handle: AppHandle, tag: Tag) {
 }
 
 fn main() {
-    let menus = get_menu();
-
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
@@ -121,47 +118,97 @@ fn main() {
             get_tasks_by_day,
             get_tasks_by_date_range
         ])
-        .menu(menus)
-        .on_menu_event(|event| match event.menu_item_id() {
-            "export" => {
-                let app_handle = event.window().app_handle();
-                let data = match app_handle.db(|db| database::get_all(db)) {
-                    Ok(data) => data,
-                    Err(e) => {
-                        eprintln!("Error while fetching data: {}", e);
-                        return;
-                    }
-                };
-                if let Err(e) = export_tasks(data) {
-                    eprintln!("Error while exporting tasks: {}", e);
-                }
-                let window = event.window();
-                let message_payload = "Export Desktop tasks.csv".to_string();
-                window.emit("export", message_payload).unwrap();
-            }
-            "close" => {
-                let window = event.window();
-                window.close().unwrap();
-            }
-            "createTag" => {
-                let window = event.window();
-                let message_payload = "Create Tag".to_string();
-                window.emit("createTag", message_payload).unwrap();
-            }
-            "editTag" => {
-                let window = event.window();
-                let message_payload = "Edit Tag".to_string();
-                window.emit("editTag", message_payload).unwrap();
-            }
-
-            _ => {}
-        })
         .setup(|app| {
             let handle = app.handle();
             let app_state: State<AppState> = handle.state();
             let db =
                 database::initialize_database(&handle).expect("Database initialize should succeed");
             *app_state.db.lock().unwrap() = Some(db);
+            let close = MenuItemBuilder::new("Close")
+                .id("close")
+                .accelerator("CmdOrControl+W")
+                .build(app)?;
+
+            let export = MenuItemBuilder::new("Export")
+                .id("export")
+                .accelerator("CmdOrControl+E")
+                .build(app)?;
+
+            let file_submenu = SubmenuBuilder::new(app, "File")
+                .about(Some(AboutMetadata {
+                    ..Default::default()
+                }))
+                .separator()
+                .item(&close)
+                .separator()
+                .item(&export)
+                .separator()
+                .services()
+                .separator()
+                .hide()
+                .hide_others()
+                .quit()
+                .build()?;
+
+            let create_tag = MenuItemBuilder::new("Create Tag")
+                .id("createTag")
+                .accelerator("CmdOrControl+T")
+                .build(app)?;
+
+            let edit_tag = MenuItemBuilder::new("Edit Tag")
+                .id("editTag")
+                .accelerator("CmdOrControl+Shift+T")
+                .build(app)?;
+
+            let tags_submenu = SubmenuBuilder::new(app, "Tags")
+                .about(Some(AboutMetadata {
+                    ..Default::default()
+                }))
+                .separator()
+                .item(&create_tag)
+                .separator()
+                .item(&edit_tag)
+                .separator()
+                .build()?;
+
+            let menu = MenuBuilder::new(app)
+                .items(&[&file_submenu, &tags_submenu])
+                .build()?;
+            let _ = app.set_menu(menu);
+            app.on_menu_event(|app, event| match event.id.as_ref() {
+                "export" => {
+                    let data = match app.db(|db| database::get_all(db)) {
+                        Ok(data) => data,
+                        Err(e) => {
+                            eprintln!("Error while fetching data: {}", e);
+                            return;
+                        }
+                    };
+                    let _ = export_tasks(data);
+                    if let Some(window) = app.get_webview_window("main") {
+                        let message_payload = "Export Desktop tasks.csv".to_string();
+                        window.emit("export", message_payload).unwrap();
+                    }
+                }
+                "close" => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        window.close().unwrap();
+                    }
+                }
+                "createTag" => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        let message_payload = "Create Tag".to_string();
+                        window.emit("createTag", message_payload).unwrap();
+                    }
+                }
+                "editTag" => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        let message_payload = "Edit Tag".to_string();
+                        window.emit("editTag", message_payload).unwrap();
+                    }
+                }
+                _ => {}
+            });
             Ok(())
         })
         .run(tauri::generate_context!())
