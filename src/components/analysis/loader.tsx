@@ -57,13 +57,13 @@ export default function AnalysisLoaderComponent() {
           >
             {openOption === "chart" ? (
               <div className="flex">
-                <ChartArea size={20} className="text-gray-500" />
-                <div className="hidden md:block">チャート表示</div>
+                <LayoutList size={20} className="text-gray-500" />
+                <div className="hidden md:block">リスト表示</div>
               </div>
             ) : (
               <div className="flex">
-                <LayoutList size={20} className="text-gray-500" />
-                <div className="hidden md:block">リスト表示</div>
+                <ChartArea size={20} className="text-gray-500" />
+                <div className="hidden md:block">チャート表示</div>
               </div>
             )}
           </Button>
